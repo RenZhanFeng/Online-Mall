@@ -1,13 +1,36 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Header />
+    <Nav />
+    <router-view class="banxin" />
+    <Footer />
   </div>
 </template>
 
-<style>
+<script>
+import Header from "components/Header";
+import Nav from "components/Nav";
+import Footer from "components/Footer";
 
+export default {
+  components: {
+    Header,
+    Nav,
+    Footer,
+  },
+};
+</script>
+
+<style>
+body {
+  font-size: 16px;
+  font-family: SourceHanSansSC;
+  font-weight: 300;
+  color: #333333;
+}
+.banxin {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
 </style>

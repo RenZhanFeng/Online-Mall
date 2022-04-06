@@ -6,6 +6,7 @@ import 'reset-css'
 
 Vue.config.productionTip = false
 
+
 new Vue({
   router,
   store,
