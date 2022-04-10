@@ -12,7 +12,7 @@
           <li>获取积分</li>
           <li>公司官网</li>
         </ul>
-        <div class="shopping_car">
+        <div class="shopping_car" @click="showLoginModalFn">
           <img src="../assets/img/Shopping.png" alt="" />
           购物车
           <span class="count">6</span>
@@ -27,11 +27,16 @@ export default {
   data() {
     return {};
   },
+  methods: {
+    showLoginModalFn() {
+      console.log(1);
+      this.$store.commit("showLoginModalFn");
+    },
+  },
 };
 </script>
  
 <style lang = "less" scoped>
-
 .header {
   width: 100%;
   background: #242b39;

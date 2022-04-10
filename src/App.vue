@@ -4,6 +4,7 @@
     <Nav />
     <router-view class="banxin" />
     <Footer />
+    <Login v-show="this.$store.state.ifShowLoginModel" />
   </div>
 </template>
 
@@ -11,12 +12,14 @@
 import Header from "components/Header";
 import Nav from "components/Nav";
 import Footer from "components/Footer";
+import Login from "components/Login";
 
 export default {
   components: {
     Header,
     Nav,
     Footer,
+    Login,
   },
 };
 </script>
