@@ -12,11 +12,16 @@
           <li>获取积分</li>
           <li>公司官网</li>
         </ul>
-        <div class="shopping_car" @click="showLoginModalFn">
+        <div
+          class="shopping_car"
+          @click="showLoginModalFn"
+          v-if="$store.state.logined"
+        >
           <img src="../assets/img/Shopping.png" alt="" />
           购物车
           <span class="count">6</span>
         </div>
+        <div class="shopping_car" @click="showLoginModalFn" v-else>登录</div>
       </div>
     </section>
   </div>
@@ -29,7 +34,6 @@ export default {
   },
   methods: {
     showLoginModalFn() {
-      console.log(1);
       this.$store.commit("showLoginModalFn");
     },
   },

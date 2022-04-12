@@ -8,7 +8,7 @@ const instance = axios.create({
 // http request 拦截器
 instance.interceptors.request.use(
     (config) => {
-        if (config.url === "/wechatUsers/PCLogin") {
+        if (config.url === "/wechatUsers/PCLogin" || config.url === "/sendSMS" || config.url === '/phoneRegin') {
             config.headers["Content-Type"] = "application/x-www-form-urlencoded";
         }
         const token = sessionStorage.getItem("token");

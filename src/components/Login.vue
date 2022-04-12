@@ -9,7 +9,7 @@
       </ul>
       <div class="from">
         <div class="ipt">
-          <input type="text" placeholder="请输入手机号" />
+          <input type="text" placeholder="请输入手机号" v-model="phoneNum" />
         </div>
         <slide-verify
           :l="42"
@@ -25,24 +25,110 @@
           :slider-text="msg"
         ></slide-verify>
         <div class="ipt">
-          <input type="text" placeholder="请输入短信验证码" />
-          <div class="btn">获取验证码</div>
+          <input
+            type="text"
+            placeholder="请输入短信验证码"
+            v-model="verificationCode"
+          />
+          <div
+            class="btn"
+            :class="showCountDown ? 'active' : ''"
+            @click="getVerificationCode"
+          >
+            <span v-if="!showCountDown">获取验证码</span>
+            <span v-else>{{ countDown }} s</span>
+          </div>
         </div>
         <div></div>
-        <div class="login_btn" @click="submitFn">登录</div>
+        <div class="login_btn" @click="login">登录</div>
       </div>
     </div>
   </div>
 </template>
  
 <script>
+import { validateTelephone } from "../utils/validate";
+import { SendVerificationCodeApi, PhoneLoginApi } from "../request/api";
+
 export default {
   data() {
     return {
       msg: "向右滑动",
+      phoneNum: "18934022254", // 手机号码
+      verificationCode: "", // 验证码
+      countDown: 60, // 倒计时
+      showCountDown: false, // 是否显示倒计时
     };
   },
   methods: {
+    // 点击登录按钮
+    login() {
+      // 判断手机号码是否填写正确
+      if (!validateTelephone(this.phoneNum)) {
+        console.log("请正确填写手机号码");
+        return;
+      }
+      // 判断验证码是否填写
+      if (this.verificationCode.trim() == "") {
+        console.log("请填写验证码");
+        return;
+      }
+      // 判断滑块是否滑动正确
+      if (this.msg == "再试一次" || this.msg == "向右滑动") {
+        console.log("请滑动拼图");
+        return;
+      }
+      // 登录请求
+      console.log("开始登录");
+      PhoneLoginApi({
+        verifyCode: this.verificationCode,
+        phone: this.phoneNum,
+      }).then((res) => {
+        if (res.code === 0) {
+          console.log(res.message);
+          // 存储token
+          localStorage.setItem("x-auth-token", res["x-auth-token"]);
+          // 切换登录状态，顶部登录按钮改为购物车
+          this.$store.commit("changeLogined");
+          // 登录模态框隐藏
+          this.hideLoginModalFn();
+        } else {
+          console.log(res.message);
+        }
+      });
+    },
+    // 获取手机验证码
+    getVerificationCode() {
+      // 正则验证手机号码是否正确
+      if (!validateTelephone(this.phoneNum)) {
+        console.log("请正确填写手机号码");
+        return;
+      }
+      // 倒计时
+      let timer = null;
+      this.showCountDown = true;
+      this.timer = setInterval(() => {
+        this.countDown--;
+        if (this.countDown == 0) {
+          this.countDown = 60;
+          this.showCountDown = false;
+          clearInterval(timer);
+        }
+      }, 1000);
+      // 发送验证码请求
+      SendVerificationCodeApi({ phone: this.phoneNum })
+        .then((res) => {
+          if (res.code === 0) {
+            console.log("获取手机验证码成功:", res);
+          } else {
+            console.log(res.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+          console.log("获取手机验证码失败:", err);
+        });
+    },
     // 隐藏登录模块
     hideLoginModalFn() {
       this.$store.commit("hideLoginModalFn");
@@ -59,14 +145,6 @@ export default {
     // 拼图刷新
     onRefresh() {
       this.msg = "再试一次";
-    },
-    // 点击登录按钮
-    submitFn() {
-      if (this.msg == "再试一次" || this.msg == "向右滑动") {
-        console.log("请滑动拼图");
-      } else {
-        console.log("开始登录");
-      }
     },
   },
 };
@@ -141,6 +219,10 @@ export default {
           text-align: center;
           cursor: pointer;
           border-radius: 5px;
+          &.active {
+            background: #ccc;
+            color: #fff;
+          }
         }
       }
       .login_btn {
