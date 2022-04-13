@@ -4,7 +4,7 @@
       <div class="left">欢迎来到线上商城</div>
       <div class="right">
         <ul>
-          <li class="avatar_li">
+          <li class="avatar_li" @click="aaa">
             <img class="avatar" src="../assets/img/userImg.png" alt="avatar" />
             <span>用户名：游客</span>
           </li>
@@ -35,6 +35,9 @@ export default {
   methods: {
     showLoginModalFn() {
       this.$store.commit("showLoginModalFn");
+    },
+    aaa() {
+      this.$store.dispatch("changeToastAsync",{toastMsg:'登陆成功',toastType:'success'});
     },
   },
 };
