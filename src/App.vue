@@ -1,7 +1,9 @@
 <template>
   <div id="app">
-    <transition name="toast"><Toast v-show="$store.state.toastStatus" /></transition>
-    <Header />
+    <transition name="toast"
+      ><Toast v-show="$store.state.toastStatus"
+    /></transition>
+    <Header :key="headerCount" />
     <Nav />
     <router-view class="banxin" />
     <Footer />
@@ -17,12 +19,27 @@ import Login from "components/Login";
 import Toast from "components/Toast";
 
 export default {
+  data() {
+    return {
+      headerCount: 1, // 用来刷新Header组件
+    };
+  },
   components: {
     Toast,
     Header,
     Nav,
     Footer,
     Login,
+  },
+  watch: {
+    // 路由发生变化就修改headerCount让Header刷新
+    "$route.path": {
+      handler(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.headerCount++;
+        }
+      },
+    },
   },
 };
 </script>
@@ -40,14 +57,17 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-.toast-enter, .toast-leave-to{
+.toast-enter,
+.toast-leave-to {
   top: -50px;
   opacity: 0;
 }
-.toast-enter-active, .toast-leave-active{
-  transition: all .4s linear;
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.4s linear;
 }
-.toast-enter-to, .toast-leave{
+.toast-enter-to,
+.toast-leave {
   top: 0;
   opacity: 1;
 }

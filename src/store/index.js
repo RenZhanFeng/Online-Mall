@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 是否显示登录模块
-    ifShowLoginModel: true,
+    ifShowLoginModel: false,
     // Header组件的登录状态
     logined: localStorage.getItem('x-auth-token'),
     // Toast
@@ -47,7 +47,7 @@ export default new Vuex.Store({
       });
       setTimeout(() => {
         commit("hideToast");
-      }, 2000);
+      }, 3000);
     }
   },
   modules: {

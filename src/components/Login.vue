@@ -2,12 +2,22 @@
   <div class="login">
     <div class="login_bg" @click="hideLoginModalFn"></div>
     <div class="login_content">
-      <img class="close" src="../assets/img/login/userArrow.png" alt="" />
+      <img class="close" src="../assets/img/login/userArrow.png" alt="" @click="hideLoginModalFn"/>
       <ul>
-        <li class="active">手机号码登录</li>
-        <li>微信扫码登录</li>
+        <li
+          :class="loginType == 'phone' ? 'active' : ''"
+          @click="loginType = 'phone'"
+        >
+          手机号码登录
+        </li>
+        <li
+          :class="loginType == 'weixin' ? 'active' : ''"
+          @click="weixinClickFn"
+        >
+          微信扫码登录
+        </li>
       </ul>
-      <div class="from">
+      <div class="from" v-show="loginType == 'phone'">
         <div class="ipt">
           <input type="text" placeholder="请输入手机号" v-model="phoneNum" />
         </div>
@@ -40,8 +50,9 @@
           </div>
         </div>
         <div></div>
-        <div class="login_btn" @click="login">登录</div>
+        <div class="login_btn" @click="phoneLogin">登录</div>
       </div>
+      <div id="weixin" v-show="loginType == 'weixin'"></div>
     </div>
   </div>
 </template>
@@ -58,34 +69,64 @@ export default {
       verificationCode: "", // 验证码
       countDown: 60, // 倒计时
       showCountDown: false, // 是否显示倒计时
+      loginType: "phone", // 登录模式(phone, weixin)
     };
   },
   methods: {
-    // 点击登录按钮
-    login() {
+    // 微信扫码登录
+    weixinClickFn() {
+      this.loginType = "weixin";
+      // let _this = this;
+      // new WxLogin({
+      //   id: "weixin",
+      //   appid: "wx67cfaf9e3ad31a0d", // 这个appid要填死
+      //   scope: "snsapi_login",
+      //   // 扫码成功后重定向的接口
+      //   redirect_uri: "https://sc.wolfcode.cn/cms/wechatUsers/shop/PC",
+      //   // state填写编码后的url
+      //   state: encodeURIComponent(
+      //     window.btoa(process.env.VUE_APP_STATE_URL + _this.$route.path)
+      //   ),
+      //   // 调用样式文件
+      //   href: "data:text/css;base64,LmltcG93ZXJCb3ggLnRpdGxlLA0KLmltcG93ZXJCb3ggLmluZm8gew0KICAgIGRpc3BsYXk6IG5vbmU7DQp9DQoNCi5pbXBvd2VyQm94IC5xcmNvZGUgew0KICAgIG1hcmdpbi10b3A6IDIwcHg7DQp9",
+      // });
+    },
+    // 点击登录按钮(手机验证码登录)
+    phoneLogin() {
       // 判断手机号码是否填写正确
       if (!validateTelephone(this.phoneNum)) {
-        console.log("请正确填写手机号码");
+        this.$store.dispatch("changeToastAsync", {
+          toastMsg: "请正确填写手机号码",
+          toastType: "warn",
+        });
         return;
       }
       // 判断验证码是否填写
       if (this.verificationCode.trim() == "") {
-        console.log("请填写验证码");
+        this.$store.dispatch("changeToastAsync", {
+          toastMsg: "请填写验证码",
+          toastType: "warn",
+        });
         return;
       }
       // 判断滑块是否滑动正确
       if (this.msg == "再试一次" || this.msg == "向右滑动") {
-        console.log("请滑动拼图");
+        this.$store.dispatch("changeToastAsync", {
+          toastMsg: "请滑动拼图",
+          toastType: "warn",
+        });
         return;
       }
       // 登录请求
-      console.log("开始登录");
       PhoneLoginApi({
         verifyCode: this.verificationCode,
         phone: this.phoneNum,
       }).then((res) => {
         if (res.code === 0) {
-          console.log(res.message);
+          this.$store.dispatch("changeToastAsync", {
+            toastMsg: res.message,
+            toastType: "success",
+          });
           // 存储token
           localStorage.setItem("x-auth-token", res["x-auth-token"]);
           // 切换登录状态，顶部登录按钮改为购物车
@@ -93,7 +134,10 @@ export default {
           // 登录模态框隐藏
           this.hideLoginModalFn();
         } else {
-          console.log(res.message);
+          this.$store.dispatch("changeToastAsync", {
+            toastMsg: res.message,
+            toastType: "danger",
+          });
         }
       });
     },
@@ -101,7 +145,10 @@ export default {
     getVerificationCode() {
       // 正则验证手机号码是否正确
       if (!validateTelephone(this.phoneNum)) {
-        console.log("请正确填写手机号码");
+        this.$store.dispatch("changeToastAsync", {
+          toastMsg: "请正确填写手机号码",
+          toastType: "warn",
+        });
         return;
       }
       // 倒计时
@@ -119,14 +166,22 @@ export default {
       SendVerificationCodeApi({ phone: this.phoneNum })
         .then((res) => {
           if (res.code === 0) {
-            console.log("获取手机验证码成功:", res);
+            this.$store.dispatch("changeToastAsync", {
+              toastMsg: res.message,
+              toastType: "success",
+            });
           } else {
-            console.log(res.message);
+            this.$store.dispatch("changeToastAsync", {
+              toastMsg: res.message,
+              toastType: "warn",
+            });
           }
         })
         .catch((err) => {
-          console.log(err.message);
-          console.log("获取手机验证码失败:", err);
+          this.$store.dispatch("changeToastAsync", {
+            toastMsg: err.message,
+            toastType: "danger",
+          });
         });
     },
     // 隐藏登录模块
@@ -235,6 +290,11 @@ export default {
         color: #fff;
         background: #0a328e;
       }
+    }
+    #weixin {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }

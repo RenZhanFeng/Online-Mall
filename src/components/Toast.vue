@@ -25,6 +25,7 @@ export default {
 <style lang = "less" scoped>
 .toast {
   position: fixed;
+  z-index: 10000;
   left: 50%;
   transform: translateX(-50%);
   padding: 10px 20px;
@@ -41,6 +42,7 @@ export default {
   }
   .icon-toast_chenggong {
     color: green;
+    font-weight: bold;
   }
 }
 </style>
