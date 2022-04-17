@@ -87,7 +87,6 @@ export default {
       if (userToken) {
         UserProfilesApi().then((res) => {
           if (res.code === 0) {
-            console.log("用户信息:", res.data.userInfo);
             let { cartTotal, userInfo } = res.data;
             this.userInfo = userInfo;
             this.cartTotal = cartTotal;

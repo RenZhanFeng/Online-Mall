@@ -5,7 +5,7 @@
     /></transition>
     <Header :key="headerCount" />
     <Nav />
-    <router-view class="banxin" />
+    <router-view @upDataNum="upDataNum" />
     <Footer />
     <Login v-show="this.$store.state.ifShowLoginModel" />
   </div>
@@ -30,6 +30,11 @@ export default {
     Nav,
     Footer,
     Login,
+  },
+  methods: {
+    upDataNum() {
+      this.headerCount++;
+    },
   },
   watch: {
     // 路由发生变化就修改headerCount让Header刷新

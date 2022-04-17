@@ -2,14 +2,14 @@ import axios from 'axios'
 
 const instance = axios.create({
     //baseURL: 'http://kumanxuan1.f3322.net:8881/cms',
-    baseURL:'http://gz.wolfcode.cn/cms',
+    baseURL: 'http://gz.wolfcode.cn/cms',
     timeout: 5000
 })
 
 // http request 拦截器
 instance.interceptors.request.use(
     (config) => {
-        if (config.url === "/wechatUsers/PCLogin" || config.url === "/sendSMS" || config.url === '/phoneRegin') {
+        if (config.url === "/wechatUsers/PCLogin" || config.url === "/sendSMS" || config.url === '/phoneRegin' || config.url === '/shop/carts/add') {
             config.headers["Content-Type"] = "application/x-www-form-urlencoded";
         }
         const token = localStorage.getItem("x-auth-token");

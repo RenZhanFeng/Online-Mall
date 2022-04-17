@@ -37,8 +37,6 @@ export default {
 
 .footer {
   width: 100%;
-  position: fixed;
-  bottom: 0;
   background: #242b39;
   color: #7d879a;
   .banxin {
