@@ -5,7 +5,7 @@
         <section>
           <img
             class="productImg"
-            :src="`http://sc.wolfcode.cn${item.coverImg}`"
+            v-lazy="`http://sc.wolfcode.cn${item.coverImg}`"
             alt="product"
           />
           <img

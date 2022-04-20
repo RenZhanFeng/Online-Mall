@@ -65,7 +65,7 @@ export default {
   data() {
     return {
       msg: "向右滑动",
-      phoneNum: "18934022254", // 手机号码
+      phoneNum: "", // 手机号码
       verificationCode: "", // 验证码
       countDown: 60, // 倒计时
       showCountDown: false, // 是否显示倒计时

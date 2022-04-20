@@ -76,4 +76,12 @@ body {
   top: 0;
   opacity: 1;
 }
+
+/* 懒加载样式设置 */
+img[lazy="loading"] {
+  display: block;
+  width: 30% !important;
+  height: 30% !important;
+  margin: 0 auto;
+}
 </style>

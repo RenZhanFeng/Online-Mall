@@ -27,3 +27,9 @@ export const AddToShoppingCartAPI = (params) => request.post('/shop/carts/add', 
 
 // 商品搜索（含首页的“更多”）
 export const GoodsSearchApi = (params) => request.get('/products', { params })
+
+// 查看购物车
+export const CartDataApi = () => request.get('/shop/carts')
+
+// 删除购物车
+export const DeleteCartApi = (params) => request.delete(`/shop/carts?productIds=${params.id}`)

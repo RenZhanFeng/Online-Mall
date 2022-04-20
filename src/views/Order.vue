@@ -1,17 +1,17 @@
 <template>
-   <div class="order">我的订单</div>
+  <div class="order banxin">
+    <img src="../assets/img/404.jpg" alt="404" width="100%"/>
+  </div>
 </template>
  
 <script>
 export default {
- data () {
- return {
-
- }
- }
-}
+  data() {
+    return {};
+  },
+};
 </script>
  
 <style lang = "less" scoped>
- 
+@import "../total.less";
 </style>

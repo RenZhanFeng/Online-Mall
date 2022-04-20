@@ -19,7 +19,7 @@
           <li>获取积分</li>
           <li>公司官网</li>
         </ul>
-        <div class="shopping_car" v-if="$store.state.logined">
+        <div class="shopping_car" v-if="$store.state.logined" @click="goCart">
           <img src="../assets/img/Shopping.png" alt="" />
           购物车
           <span class="count">{{ cartTotal }}</span>
@@ -45,6 +45,10 @@ export default {
     };
   },
   methods: {
+    // 去购物车
+    goCart() {
+      this.$router.push("/user/cart");
+    },
     showLoginModalFn() {
       this.$store.commit("showLoginModalFn");
     },
@@ -90,6 +94,9 @@ export default {
             let { cartTotal, userInfo } = res.data;
             this.userInfo = userInfo;
             this.cartTotal = cartTotal;
+            // 存储userInfo
+            let myUserInfo = JSON.stringify(userInfo);
+            localStorage.setItem("userInfo", myUserInfo);
           } else {
             this.$store.dispatch("changeToastAsync", {
               toastMsg: res.message,

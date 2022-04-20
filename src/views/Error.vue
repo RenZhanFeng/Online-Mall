@@ -1,5 +1,5 @@
 <template>
-  <div class="welfare banxin">
+  <div class="banxin">
     <img src="../assets/img/404.jpg" alt="404" width="100%" />
   </div>
 </template>
