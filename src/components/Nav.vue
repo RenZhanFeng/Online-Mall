@@ -14,8 +14,13 @@
       </ul>
     </div>
     <div class="search">
-      <input type="text" placeholder="输入关键字" />
-      <span class="btn"
+      <input
+        type="text"
+        placeholder="输入关键字"
+        v-model.trim="searchContent"
+        @keydown.13="searchFn"
+      />
+      <span class="btn" @click="searchFn"
         ><img src="../assets/img/search.png" alt="search"
       /></span>
     </div>
@@ -26,6 +31,8 @@
 export default {
   data() {
     return {
+      // 搜索框的值
+      searchContent: "",
       navList: [
         {
           id: 1,
@@ -56,8 +63,16 @@ export default {
     };
   },
   methods: {
+    // 执行搜索
+    searchFn() {
+      // 跳转到goods页面并携带参数
+      this.$router.push(`/goods?keyword=${this.searchContent}`);
+      // 清空搜索栏内容
+      this.searchContent = "";
+    },
+    //跳转链接
     jumpLink(path) {
-        this.$router.push(path);
+      this.$router.push(path);
     },
   },
 };

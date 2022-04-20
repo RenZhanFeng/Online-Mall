@@ -63,10 +63,6 @@ export default {
         let dataList = JSON.parse(
           JSON.stringify(res.data?.data?.records)
         ).slice(0, 4);
-        // 产品图片路径加前缀
-        dataList.forEach((element) => {
-          element.coverImg = `http://sc.wolfcode.cn${element.coverImg}`;
-        });
         this.recommendList = dataList;
       }
     });
@@ -75,10 +71,6 @@ export default {
     HotDataApi().then((res) => {
       if (res.code === 0) {
         let dataList = JSON.parse(JSON.stringify(res.data?.data?.records));
-        // 产品图片路径加前缀
-        dataList.forEach((element) => {
-          element.coverImg = `http://sc.wolfcode.cn${element.coverImg}`;
-        });
         this.hotList = dataList;
       }
     });

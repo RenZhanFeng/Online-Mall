@@ -4,6 +4,7 @@
       v-for="(item, index) in nav"
       :key="index"
       v-text="index < nav.length - 1 ? `${item.name} / ` : item.name"
+      :class="index == nav.length - 1 ? 'active' : ''"
     ></span>
   </div>
 </template>
@@ -24,7 +25,6 @@ export default {
  
 <style lang = "less" scoped>
 .crumbs {
-  margin: 60px 0 0 0;
   span {
     cursor: pointer;
     color: #999999;

@@ -184,6 +184,14 @@ export default {
     // 加入购物车
     addToCart() {
       // 用户未登录的情况下，不能加入购物车并提醒登录
+      if (!localStorage.getItem("x-auth-token")) {
+        this.$store.dispatch("changeToastAsync", {
+          toastMsg: "请先登录账号",
+          toastType: "danger",
+        });
+        this.$store.commit("showLoginModalFn");
+        return;
+      }
 
       AddToShoppingCartAPI({
         productId: this.productInfo.id,
@@ -191,14 +199,12 @@ export default {
         modified: 1,
       }).then((res) => {
         // 更新顶部购物车中商品数量值
-        this.$emit("upDataNum")
+        this.$emit("upDataNum");
         if (res.code === 0) {
           this.$store.dispatch("changeToastAsync", {
             toastMsg: "成功加入购物车",
             toastType: "success",
           });
-
-          console.log(res);
         } else {
           this.$store.dispatch("changeToastAsync", {
             toastMsg: res.message,
@@ -274,6 +280,9 @@ export default {
 <style lang = "less" scoped>
 @import "../total.less";
 
+.banxin{
+  margin-top: 20px;
+}
 .productInfo {
   display: flex;
   justify-content: space-between;

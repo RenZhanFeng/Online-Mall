@@ -24,3 +24,6 @@ export const ProductDataAPI = (params) => request.get(`/products/${params.id}`)
 
 // 加入购物车
 export const AddToShoppingCartAPI = (params) => request.post('/shop/carts/add', qs.stringify(params))
+
+// 商品搜索（含首页的“更多”）
+export const GoodsSearchApi = (params) => request.get('/products', { params })

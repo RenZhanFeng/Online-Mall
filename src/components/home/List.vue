@@ -3,7 +3,11 @@
     <ul>
       <li v-for="item in arr" :key="item.id" @click="goDetail(item.id)">
         <section>
-          <img class="productImg" :src="item.coverImg" alt="product" />
+          <img
+            class="productImg"
+            :src="`http://sc.wolfcode.cn${item.coverImg}`"
+            alt="product"
+          />
           <img
             class="labelImg"
             src="../../assets/img/home/hot-j.png"
