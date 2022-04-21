@@ -30,8 +30,11 @@
         </ul>
       </div>
     </div>
-    <List :arr="allGoods" v-if="allGoods.length !== 0"></List>
-    <div class="noMore" v-else>没有更多了</div>
+    <List :arr="allGoods"></List>
+    <div class="loading">
+      <i class="iconfont icon-loading" v-show="loading"></i>
+      <span>{{ loading ? "正在加载中..." : "已经到底啦~" }}</span>
+    </div>
   </div>
 </template>
  
@@ -40,9 +43,16 @@ import List from "components/home/List.vue";
 import BreadCrumbs from "../components/BreadCrumbs.vue";
 import { GoodsSearchApi } from "../request/api";
 
+// 声明一个obj，用来存放每一分数据项（每项是8个）
+let obj = {};
+//声明一个objKey，用来指明哪一份数据项
+let objKey = 0;
+
 export default {
   data() {
     return {
+      // 加载状态，默认显示“正在加载中”
+      loading: true,
       // 面包屑
       breadNav: [{ name: "首页" }, { name: "全部礼品" }],
       // 商品排序
@@ -85,6 +95,11 @@ export default {
     },
     // 封装数据请求函数
     requestData({ min = "", max = "", type = "", did = "", keyword = "" }) {
+      // 恢复初始值
+      obj = {};
+      objKey = 0;
+      this.loading = true;
+      this.allGoods = [];
       GoodsSearchApi({
         did: did, // 栏目 目前可提供的参数是 1->精品推荐 2-> 热门兑换 0->全部
         type: type, // 1->实体商品 2->虚拟商品 0->全部
@@ -93,9 +108,48 @@ export default {
         keyword: keyword, // 商品关键词
       }).then((res) => {
         if (res.code === 0) {
-          this.allGoods = res.data;
+          let { data } = res;
+          let oneArrLength = 8; // 一份数据的长度（个数）
+          // 拆分数据（为了做滚动加载）
+          if (data.length <= oneArrLength) {
+            this.allGoods = data;
+            window.removeEventListener("scroll", this.scrollFn);
+            this.loading = false;
+          } else {
+            for (let i = 0; i < data.length / oneArrLength; i++) {
+              obj[i] = data.slice(i * oneArrLength, oneArrLength * (i + 1));
+            }
+            this.allGoods = obj[objKey];
+            window.addEventListener("scroll", this.scrollFn);
+          }
         }
       });
+    },
+    // 滚动事件（滚动加载）
+    scrollFn() {
+      // 窗口高度
+      let winHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
+      // 滚动长度
+      let st =
+        document.documentElement.scrollTop ||
+        document.body.scrollHeight ||
+        window.pageYOffset;
+      // 文档长度
+      let docHeight =
+        document.documentElement.scrollHeight || document.body.scrollHeight;
+
+      if (objKey === Object.keys(obj).length - 1) {
+        this.loading = false;
+        return;
+      }
+      // 触底了，给this.allGoods追加数据
+      if (st + winHeight >= docHeight) {
+        objKey++;
+        this.allGoods = this.allGoods.concat(obj[objKey]);
+      }
     },
   },
   watch: {
@@ -111,6 +165,14 @@ export default {
   created() {
     //请求商品数据，keyword是搜索框的值
     this.requestData({ keyword: this.$route?.query?.keyword || "" });
+  },
+  mounted() {
+    // 监听滚动
+    window.addEventListener("scroll", this.scrollFn);
+  },
+  beforeDestroy() {
+    // 取消监听
+    window.removeEventListener("scroll", this.scrollFn);
   },
   components: {
     BreadCrumbs,
@@ -150,11 +212,23 @@ export default {
       }
     }
   }
-  .noMore {
-    margin: 30px 0;
-    text-align: center;
+  .loading {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
     color: #999;
-    font-size: 14px;
+    .iconfont {
+      margin-right: 10px;
+      animation: loading 1s linear infinite;
+    }
+  }
+}
+@keyframes loading {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
